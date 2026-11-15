@@ -4,20 +4,22 @@ Entry for the make.fun bounty **"Build the strongest chess engine in 4 KB of Pyt
 
 ## What it is
 
-`main.py` is a complete chess engine in 4,089 bytes: 0x88 board, alpha-beta
+`main.py` is a complete chess engine in 3,346 bytes: 0x88 board, alpha-beta
 with quiescence, iterative deepening to a fixed 60,000 nodes per move,
 transposition table, null-move pruning, killer moves, history heuristic,
 LMR (with re-search), MVV-LVA move ordering, and formula piece-square
 tables with an endgame king table. No clock, no unseeded randomness —
 fully deterministic (verified: two fresh processes play the same move on
-the same position). Stdlib only. The source is packed with lzma + base85.
+the same position). Stdlib only. The readable source (`v4.py`, 7,899 bytes)
+is packed with the kit's `makefun compress` into `main.py`.
 
 It talks to the make.fun environment at `MAKEFUN_ENV_URL`: it asks for the
 game in play, replays the moves, and sends its reply in UCI.
 
 ## Files
 
-- `main.py` — the engine (4,089 bytes)
+- `main.py` — the engine (3,346 bytes, packed from `v4.py` by the kit's
+  `makefun compress`; the packed payload decompresses byte-for-byte to `v4.py`)
 - `LICENSE` — MIT
 
 ## Local check
@@ -26,12 +28,13 @@ game in play, replays the moves, and sends its reply in UCI.
 python3 main.py   # needs MAKEFUN_ENV_URL set
 ```
 
-## Local test results (v2, exact packed file)
+## Local test results (v2, exact kit-packed file)
 
-- Perft: all 20 standard positions pass (startpos, Kiwipete, positions 3–6).
+- Perft: all 20 standard positions pass (startpos, Kiwipete, positions 3–6),
+  run against the kit-packed `main.py` itself.
 - Deterministic: same position in two fresh processes gives the same move
-  (startpos, Kiwipete, endgame KQ vs KR all match).
-- Speed: ~2–4.5 s per move (limit: 10 s); slowest ~4.6 s.
+  (startpos b1c3, Kiwipete e2a6, endgame KQ vs KR b4f4 — all match).
+- Speed: ~2.4–4.3 s per move (limit: 10 s); slowest ~4.6 s.
 - Practice trial 0 vs the house gauntlet (exact packed file, local kit env):
   3 wins, 1 draw, 2 losses (3.5/6) — estimated Elo ~1,364.
   Win vs depth-2 by checkmate; win vs depth-3 by checkmate;
@@ -49,9 +52,13 @@ python3 main.py   # needs MAKEFUN_ENV_URL set
 
 ## Development notes
 
-Readable v2 source: `v4.py` (7,899 bytes, kept in `~/workspace/makefun-chess-dev/`
-outside the repo; it re-packs byte-for-byte to the installed `main.py`).
-v1 (3.0/6, ~1,279 Elo) was superseded by v2 and its packed file was lost
-when the VM's /tmp was wiped; v2 is installed as `main.py`. The 4 KB cap
-forced trade-offs: futility pruning and the check extension were dropped
-to fit null-move pruning, killers, history, and the endgame king table.
+Readable v2 source: `v4.py` (7,899 bytes, kept in the repository's folder
+but not committed — the kit's bundle uploads it beside the transcripts;
+a copy is also kept in `~/workspace/makefun-chess-dev/`). It packs with
+`makefun compress v4.py --out main.py` to the installed `main.py`
+(3,346 bytes; the payload decompresses byte-for-byte to `v4.py`). An
+earlier hand-packed `main.py` (4,089 bytes, own lzma + base85 stub) was
+replaced because the transcript check only credits a packed entrypoint
+the kit's `makefun compress` wrote. The 4 KB cap forced trade-offs:
+futility pruning and the check extension were dropped to fit null-move
+pruning, killers, history, and the endgame king table.
