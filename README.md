@@ -47,22 +47,19 @@ python3 main.py   # needs MAKEFUN_ENV_URL set
   Above the 1,154 practice floor; essentially tied with the sunfish
   baseline mean (~1,365), so the prize gate is borderline on one trial.
 - v1 (same trial) scored 3.0/6 (~1,279 Elo), so v2 is +0.5 points / +85 Elo.
-- Head-to-head vs the sunfish NNUE baseline at 50,000 nodes/move
-  (`sunfish_pst.py`, direct match, 2 games planned): game 1, v2 as White,
-  won by checkmate in 111 plies. Game 2 (v2 as Black) was cut short at
-  ply 29 by a VM restart that wiped /tmp, so the match stands 1–0
-  unfinished — one game proves little, but it agrees with the trial.
-- Trial wall time ~18 min (limit 30 min).
+- Head-to-head vs the sunfish NNUE baseline at 50,000 nodes/move:
+  game 1, v2 as White, won by checkmate in 111 plies; game 2 was cut
+  short by a VM restart, so the match stands 1–0 unfinished.
 
 ## Development notes
 
-Readable v2 source: `v4.py` (7,899 bytes, kept in the repository's folder
-but not committed — the kit's bundle uploads it beside the transcripts;
-a copy is also kept in `~/workspace/makefun-chess-dev/`). It packs with
-`makefun compress v4.py --out main.py` to the installed `main.py`
-(3,346 bytes; the payload decompresses byte-for-byte to `v4.py`). An
-earlier hand-packed `main.py` (4,089 bytes, own lzma + base85 stub) was
-replaced because the transcript check only credits a packed entrypoint
-the kit's `makefun compress` wrote. The 4 KB cap forced trade-offs:
-futility pruning and the check extension were dropped to fit null-move
-pruning, killers, history, and the endgame king table.
+Readable v2 source: `v4.py` (7,899 bytes, kept beside the repo but not
+committed — the kit's bundle uploads it beside the transcripts). It
+packs with `makefun compress v4.py --out main.py` to the installed
+`main.py` (3,346 bytes; the payload decompresses byte-for-byte to
+`v4.py`). An earlier hand-packed `main.py` (4,089 bytes, own lzma +
+base85 stub) was replaced because the transcript check only credits a
+packed entrypoint the kit's `makefun compress` wrote. The 4 KB cap
+forced trade-offs: futility pruning and the check extension were
+dropped to fit null-move pruning, killers, history, and the endgame
+king table.
